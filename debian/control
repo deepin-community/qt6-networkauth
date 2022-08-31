@@ -1,0 +1,52 @@
+Source: qt6-networkauth
+Section: libs
+Priority: optional
+Maintainer: Deepin Developer <deepin-dev@deepin.org>
+Uploaders: Deepin Packages Builder <packages@deepin.org>
+Build-Depends: cmake (>= 3.18~),
+               debhelper-compat (= 13),
+               libgl-dev,
+               libqt6opengl6-dev (>= 6.2.4~),
+               libssl-dev,
+               libvulkan-dev [linux-any],
+               ninja-build,
+               pkg-config,
+               pkg-kde-tools,
+               qt6-base-dev (>= 6.2.4~),
+               qt6-base-private-dev (>= 6.2.4~),
+Standards-Version: 4.6.0
+Homepage: https://www.qt.io/developers/
+Rules-Requires-Root: no
+
+Package: libqt6networkauth6
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Description: Qt 6 QtNetworkAuth library
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ Qt Network Authorization provides a set of APIs that enable Qt
+ applications to obtain limited access to online accounts and HTTP
+ services without exposing users' passwords.
+ .
+ This package contains the QtNetworkAuth libraries.
+
+Package: libqt6networkauth6-dev
+Architecture: any
+Multi-Arch: same
+Section: libdevel
+Depends: libqt6networkauth6 (= ${binary:Version}),
+         qt6-base-dev,
+         ${misc:Depends},
+Description: Qt 6 QtNetworkAuth - development files
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ Qt Network Authorization provides a set of APIs that enable Qt
+ applications to obtain limited access to online accounts and HTTP
+ services without exposing users' passwords.
+ .
+ This package contains the development files needed to build Qt 6 applications
+ using the QtNetworkAuth library.
