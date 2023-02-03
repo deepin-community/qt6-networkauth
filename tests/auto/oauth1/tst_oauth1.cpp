@@ -1,30 +1,5 @@
-/****************************************************************************
-**
-** Copyright (C) 2017 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the test suite of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:GPL-EXCEPT$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 as published by the Free Software
-** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+// Copyright (C) 2017 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 #include <QtCore>
 #include <QtTest>
@@ -105,7 +80,7 @@ public:
                 setter(&expectedValue, &obj);
                 QVERIFY(previous != expectedValue); // To check if the value was modified
             }
-            QCOMPARE(spy.count(), setters.size()); // The signal should be emitted
+            QCOMPARE(spy.size(), setters.size()); // The signal should be emitted
         }
 
     public:
@@ -205,11 +180,11 @@ int tst_OAuth1::waitForFinish(QNetworkReplyPtr &reply)
     QSignalSpy spy(reply.data(), SIGNAL(downloadProgress(qint64,qint64)));
     while (!reply->isFinished()) {
         QTimer::singleShot(5000, loop, SLOT(quit()));
-        if (loop->exec() == Timeout && count == spy.count() && !reply->isFinished()) {
+        if (loop->exec() == Timeout && count == spy.size() && !reply->isFinished()) {
             returnCode = Timeout;
             break;
         }
-        count = spy.count();
+        count = spy.size();
     }
     delete loop;
     loop = nullptr;
@@ -469,7 +444,7 @@ void tst_OAuth1::getToken()
     QString expectedSignature;
     {
         QMultiMap<QString, QVariant> modifiedHeaders = oauthHeaders;
-        modifiedHeaders.insert(QMultiMap<QString, QVariant>(parameters));
+        modifiedHeaders.unite(QMultiMap<QString, QVariant>(parameters));
         modifiedHeaders.remove("oauth_signature");
         QOAuth1Signature signature(url,
                                    clientCredentials.second,
@@ -594,7 +569,7 @@ void tst_OAuth1::prepareRequestSignature()
     const auto sigString = QUrl::fromPercentEncoding(authArgs.take(oauthSignature)
                                                      .toByteArray()).toUtf8();
 
-    authArgs.insert(QMultiMap<QString, QVariant>(extraParams));
+    authArgs.unite(QMultiMap<QString, QVariant>(extraParams));
     QOAuth1Signature signature(request.url(),
                                consumerSecret,
                                accessKeySecret,
@@ -664,18 +639,18 @@ void tst_OAuth1::grant()
         QSignalSpy clientIdentifierSpy(&o1, &QOAuth1::clientIdentifierChanged);
         QSignalSpy clientSharedSecretSpy(&o1, &QOAuth1::clientSharedSecretChanged);
         o1.setClientCredentials(consumerKey, consumerSecret);
-        QCOMPARE(clientIdentifierSpy.count(), 1);
-        QCOMPARE(clientSharedSecretSpy.count(), 1);
+        QCOMPARE(clientIdentifierSpy.size(), 1);
+        QCOMPARE(clientSharedSecretSpy.size(), 1);
     }
     {
         QSignalSpy spy(&o1, &QOAuth1::temporaryCredentialsUrlChanged);
         o1.setTemporaryCredentialsUrl(requestTokenUrl);
-        QCOMPARE(spy.count(), 1);
+        QCOMPARE(spy.size(), 1);
     }
     {
         QSignalSpy spy(&o1, &QOAuth1::tokenCredentialsUrlChanged);
         o1.setTokenCredentialsUrl(accessTokenUrl);
-        QCOMPARE(spy.count(), 1);
+        QCOMPARE(spy.size(), 1);
     }
     connect(&o1, &QAbstractOAuth::statusChanged, [&](QAbstractOAuth::Status status) {
         if (status == QAbstractOAuth::Status::TemporaryCredentialsReceived) {
@@ -701,7 +676,7 @@ void tst_OAuth1::grant()
     o1.grant();
     eventLoop.exec();
     QVERIFY(tokenReceived);
-    QCOMPARE(grantSignalSpy.count(), 1);
+    QCOMPARE(grantSignalSpy.size(), 1);
     QCOMPARE(o1.status(), QAbstractOAuth::Status::Granted);
 }
 
