@@ -1,0 +1,9 @@
+Document: qt6-networkauth-manual
+Title: Qt 6 network auth
+Author: The Qt Company Ltd
+Abstract: This is the HTML documentation for Qt 6 network auth
+Section: Programming/C++
+
+Format: HTML
+Index: /usr/share/doc/qt6-networkauth-doc-html/html/networkauth/qtnetworkauth.index
+Files: /usr/share/doc/qt6-networkauth-doc-html/html/networkauth/*.html

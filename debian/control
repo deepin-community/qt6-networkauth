@@ -1,29 +1,32 @@
 Source: qt6-networkauth
 Section: libs
 Priority: optional
-Maintainer: Deepin Developer <deepin-dev@deepin.org>
-Uploaders: Deepin Packages Builder <packages@deepin.org>
-Build-Depends: cmake (>= 3.18~),
+Maintainer: Debian Qt/KDE Maintainers <debian-qt-kde@lists.debian.org>
+Uploaders: Patrick Franz <deltaone@debian.org>, Lu YaNing <dluyaning@gmail.com>,
+Build-Depends: cmake (>= 3.24~),
                debhelper-compat (= 13),
                libgl-dev,
-               libqt6opengl6-dev (>= 6.2.4~),
                libssl-dev,
                libvulkan-dev [linux-any],
                ninja-build,
                pkg-config,
                pkg-kde-tools,
-               qt6-base-dev (>= 6.2.4~),
-               qt6-base-private-dev (>= 6.2.4~),
-Standards-Version: 4.6.0
+               qt6-base-dev (>= 6.4.2+dfsg~),
+               qt6-base-private-dev (>= 6.4.2+dfsg~),
+Build-Depends-Indep: qt6-base-dev (>= 6.4~) <!nodoc>,
+                     qt6-documentation-tools (>= 6.4~) <!nodoc>,
+Standards-Version: 4.6.2
 Homepage: https://www.qt.io/developers/
+Vcs-Browser: https://salsa.debian.org/qt-kde-team/qt6/qt6-networkauth
+Vcs-Git: https://salsa.debian.org/qt-kde-team/qt6/qt6-networkauth.git
 Rules-Requires-Root: no
 
 Package: libqt6networkauth6
 Architecture: any
 Multi-Arch: same
-Depends: ${misc:Depends}, ${shlibs:Depends}
-Pre-Depends: ${misc:Pre-Depends}
-Description: Qt 6 QtNetworkAuth library
+Depends: ${misc:Depends}, ${shlibs:Depends},
+Pre-Depends: ${misc:Pre-Depends},
+Description: Qt 6 NetworkAuth library
  Qt is a cross-platform C++ application framework. Qt's primary feature
  is its rich set of widgets that provide standard GUI functionality.
  .
@@ -31,16 +34,19 @@ Description: Qt 6 QtNetworkAuth library
  applications to obtain limited access to online accounts and HTTP
  services without exposing users' passwords.
  .
- This package contains the QtNetworkAuth libraries.
+ This package contains the Qt 6 NetworkAuth libraries.
 
-Package: libqt6networkauth6-dev
+Package: qt6-networkauth-dev
+Provides: libqt6networkauth6-dev (= ${binary:Version}),
 Architecture: any
 Multi-Arch: same
 Section: libdevel
 Depends: libqt6networkauth6 (= ${binary:Version}),
          qt6-base-dev,
          ${misc:Depends},
-Description: Qt 6 QtNetworkAuth - development files
+Breaks: libqt6networkauth6-dev (<< 6.4.1-1~),
+Replaces: libqt6networkauth6-dev (<< 6.4.1-1~),
+Description: Qt 6 NetworkAuth - development files
  Qt is a cross-platform C++ application framework. Qt's primary feature
  is its rich set of widgets that provide standard GUI functionality.
  .
@@ -49,4 +55,49 @@ Description: Qt 6 QtNetworkAuth - development files
  services without exposing users' passwords.
  .
  This package contains the development files needed to build Qt 6 applications
- using the QtNetworkAuth library.
+ using the Qt 6 NetworkAuth library.
+
+Package: qt6-networkauth-doc
+Architecture: all
+Section: doc
+Depends: qt6-base-doc, ${misc:Depends},
+Multi-Arch: foreign
+Description: Qt 6 network auth documentation
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This package contains the documentation for the Qt 6 network auth.
+
+Package: qt6-networkauth-doc-html
+Architecture: all
+Section: doc
+Depends: qt6-base-doc-html, ${misc:Depends},
+Multi-Arch: foreign
+Description: Qt 6 network auth HTML documentation
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This package contains the HTML documentation for the Qt 6 network auth.
+
+Package: qt6-networkauth-doc-dev
+Architecture: all
+Section: libdevel
+Depends: qt6-base-doc-dev, ${misc:Depends},
+Multi-Arch: foreign
+Description: Qt 6 networkauth tags files
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This package contains the doxygen tags files for the qt network auth
+ documentation.
+
+Package: qt6-networkauth-examples
+Architecture: any
+Multi-Arch: same
+Section: misc
+Depends: ${misc:Depends}, ${shlibs:Depends},
+Description: Qt 6 network auth examples
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This package contains the examples for the Qt network auth submodule.

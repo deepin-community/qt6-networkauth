@@ -31,5 +31,6 @@ usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6NetworkAuth/Qt6NetworkAuthVersionlessTarg
 usr/lib/${DEB_HOST_MULTIARCH}/libQt6NetworkAuth.prl
 usr/lib/${DEB_HOST_MULTIARCH}/libQt6NetworkAuth.so
 usr/lib/${DEB_HOST_MULTIARCH}/metatypes/qt6networkauth_none_metatypes.json
+usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/Qt6NetworkAuth.pc
 usr/lib/${DEB_HOST_MULTIARCH}/qt6/mkspecs/modules/qt_lib_networkauth.pri
 usr/share/qt6/modules/NetworkAuth.json
