@@ -1,2 +1,1 @@
 usr/lib/${DEB_HOST_MULTIARCH}/qt6/examples/oauth/redditclient/redditclient
-usr/lib/${DEB_HOST_MULTIARCH}/qt6/examples/oauth/twittertimeline/twittertimeline
