@@ -45,7 +45,10 @@ QT_BEGIN_NAMESPACE
 
     After the server determines whether the request is valid this
     function will be called. Reimplement it to get the data received
-    from the server wrapped in \a reply.
+    from the server wrapped in \a reply. \a reply will be automatically
+    deleted using deleteLater(), it thus must not be stored beyond the
+    scope of this function.
+
 */
 
 /*!
@@ -63,6 +66,18 @@ QT_BEGIN_NAMESPACE
 
     This signal is emitted when new \a tokens are received from the
     server.
+*/
+
+/*!
+
+    \fn void QAbstractOAuthReplyHandler::tokenRequestErrorOccurred(QAbstractOAuth::Error error,
+                                                           const QString& errorString)
+
+    This signal is emitted when a token request or refresh \a error has
+    occurred. The \a errorString may provide further details on the error.
+
+    \sa QAbstractOAuth::requestFailed()
+    \since 6.6
 */
 
 /*!

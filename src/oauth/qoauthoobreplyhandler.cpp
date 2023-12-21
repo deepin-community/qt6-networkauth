@@ -15,6 +15,8 @@
 
 QT_BEGIN_NAMESPACE
 
+using namespace Qt::StringLiterals;
+
 QOAuthOobReplyHandler::QOAuthOobReplyHandler(QObject *parent)
     : QAbstractOAuthReplyHandler(parent)
 {}
@@ -27,11 +29,12 @@ QString QOAuthOobReplyHandler::callback() const
 void QOAuthOobReplyHandler::networkReplyFinished(QNetworkReply *reply)
 {
     if (reply->error() != QNetworkReply::NoError) {
-        qCWarning(lcReplyHandler, "%s", qPrintable(reply->errorString()));
+        emit tokenRequestErrorOccurred(QAbstractOAuth::Error::NetworkError, reply->errorString());
         return;
     }
     if (reply->header(QNetworkRequest::ContentTypeHeader).isNull()) {
-        qCWarning(lcReplyHandler, "Empty Content-type header");
+        emit tokenRequestErrorOccurred(QAbstractOAuth::Error::NetworkError,
+                                       u"Empty Content-type header"_s);
         return;
     }
     const QString contentType = reply->header(QNetworkRequest::ContentTypeHeader).isNull() ?
@@ -39,7 +42,7 @@ void QOAuthOobReplyHandler::networkReplyFinished(QNetworkReply *reply)
                 reply->header(QNetworkRequest::ContentTypeHeader).toString();
     const QByteArray data = reply->readAll();
     if (data.isEmpty()) {
-        qCWarning(lcReplyHandler, "No received data");
+        emit tokenRequestErrorOccurred(QAbstractOAuth::Error::NetworkError, u"No received data"_s);
         return;
     }
 
@@ -54,8 +57,8 @@ void QOAuthOobReplyHandler::networkReplyFinished(QNetworkReply *reply)
                || contentType.startsWith(QStringLiteral("text/javascript"))) {
         const QJsonDocument document = QJsonDocument::fromJson(data);
         if (!document.isObject()) {
-            qCWarning(lcReplyHandler, "Received data is not a JSON object: %s",
-                      qPrintable(QString::fromUtf8(data)));
+            emit tokenRequestErrorOccurred(QAbstractOAuth::Error::ServerError,
+                          u"Received data is not a JSON object: %1"_s.arg(QString::fromUtf8(data)));
             return;
         }
         const QJsonObject object = document.object();
@@ -65,7 +68,8 @@ void QOAuthOobReplyHandler::networkReplyFinished(QNetworkReply *reply)
         }
         ret = object.toVariantMap();
     } else {
-        qCWarning(lcReplyHandler, "Unknown Content-type: %s", qPrintable(contentType));
+        emit tokenRequestErrorOccurred(QAbstractOAuth::Error::ServerError,
+                               u"Unknown Content-type %1"_s.arg(contentType));
         return;
     }
 

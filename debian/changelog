@@ -1,3 +1,27 @@
+qt6-networkauth (6.6.1-2) experimental; urgency=medium
+
+  [ Patrick Franz ]
+  * Update list of installed files.
+
+ -- Patrick Franz <deltaone@debian.org>  Wed, 13 Dec 2023 21:25:35 +0100
+
+qt6-networkauth (6.6.1-1) experimental; urgency=medium
+
+  [ Patrick Franz ]
+  * New upstream release (6.6.1).
+  * Bump Qt B-Ds to 6.6.1.
+  * Update list of installed files.
+  * Update symbols from buildlogs.
+
+ -- Patrick Franz <deltaone@debian.org>  Sun, 10 Dec 2023 21:44:33 +0100
+
+qt6-networkauth (6.4.2-5) unstable; urgency=medium
+
+  [ Lisandro Damián Nicanor Pérez Meyer ]
+  * Add lintian override for qt6-networkauth-doc-html.
+
+ -- Patrick Franz <deltaone@debian.org>  Fri, 13 Oct 2023 01:04:34 +0200
+
 qt6-networkauth (6.4.2-4) unstable; urgency=medium
 
   * Team upload.
