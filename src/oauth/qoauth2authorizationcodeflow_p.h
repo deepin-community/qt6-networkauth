@@ -22,6 +22,7 @@
 #include <QtNetworkAuth/qoauthglobal.h>
 #include <QtNetworkAuth/qoauth2authorizationcodeflow.h>
 
+#include <QtCore/qpointer.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qdatetime.h>
 
@@ -41,6 +42,13 @@ public:
     void _q_accessTokenRequestFinished(const QVariantMap &values);
     void _q_accessTokenRequestFailed(QAbstractOAuth::Error error, const QString &errorString = {});
     void _q_authenticate(QNetworkReply *reply, QAuthenticator *authenticator);
+
+    QByteArray createPKCEChallenge();
+
+    QOAuth2AuthorizationCodeFlow::PkceMethod pkceMethod
+        = QOAuth2AuthorizationCodeFlow::PkceMethod::S256;
+    quint8 pkceVerifierLength = 43; // RFC 7636 Section 4.1
+    QByteArray pkceCodeVerifier;
 
     QUrl accessTokenUrl;
     QString tokenType;

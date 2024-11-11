@@ -7,6 +7,7 @@
 #include <functional>
 #include <cctype>
 #include <QtCore/qcoreapplication.h>
+#include <QtCore/qurl.h>
 #include <QtNetwork/qtcpserver.h>
 #include <QTcpSocket>
 
@@ -62,14 +63,14 @@ private:
     QMap<QTcpSocket *, HttpRequest> clients;
 };
 
-WebServer::WebServer(Handler handler, QObject *parent) :
+WebServer::WebServer(Handler h, QObject *parent) :
     QTcpServer(parent),
-    handler(handler)
+    handler(h)
 {
-    connect(this, &QTcpServer::newConnection, [=]() {
+    connect(this, &QTcpServer::newConnection, this, [this]() {
         auto socket = nextPendingConnection();
         connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
-        connect(socket, &QTcpSocket::readyRead, [=]() {
+        connect(socket, &QTcpSocket::readyRead, this, [this, socket]() {
             if (!clients.contains(socket))
                 clients[socket].port = serverPort();
 
@@ -102,8 +103,8 @@ WebServer::WebServer(Handler handler, QObject *parent) :
                 clients.remove(socket);
             } else if (Q_LIKELY(request->state == HttpRequest::State::AllDone)) {
                 Q_ASSERT(handler);
-                if (request->headers.contains("Host")) {
-                    const auto parts = request->headers["Host"].split(':');
+                if (request->headers.contains("host")) {
+                    const auto parts = request->headers["host"].split(':');
                     request->url.setHost(parts.at(0));
                     if (parts.size() == 2)
                         request->url.setPort(parts.at(1).toUInt());
@@ -228,7 +229,7 @@ bool WebServer::HttpRequest::readHeaders(QTcpSocket *socket)
 
                 const QByteArray key = fragment.mid(0, index).trimmed();
                 const QByteArray value = fragment.mid(index + 1).trimmed();
-                headers.insert(key, value);
+                headers.insert(key.toLower(), value);
                 fragment.clear();
             }
         }
@@ -238,9 +239,9 @@ bool WebServer::HttpRequest::readHeaders(QTcpSocket *socket)
 
 bool WebServer::HttpRequest::readBody(QTcpSocket *socket)
 {
-    if (headers.contains("Content-Length")) {
+    if (headers.contains("content-length")) {
         bool conversionResult;
-        bytesLeft = headers["Content-Length"].toInt(&conversionResult);
+        bytesLeft = headers["content-length"].toInt(&conversionResult);
         if (Q_UNLIKELY(!conversionResult))
             return false;
         fragment.resize(bytesLeft);
