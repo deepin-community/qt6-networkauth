@@ -243,7 +243,6 @@ libQt6NetworkAuth.so.6 libqt6networkauth6 #MINVER#
  _ZNK7QOAuth118clientSharedSecretEv@Qt_6 6.6.1
  _ZNK7QOAuth119tokenCredentialsUrlEv@Qt_6 6.6.1
  _ZNK7QOAuth123temporaryCredentialsUrlEv@Qt_6 6.6.1
- _ZSt19piecewise_construct@Qt_6 6.6.1
  _ZTI14QAbstractOAuth@Qt_6 6.6.1
  _ZTI15QAbstractOAuth2@Qt_6 6.6.1
  _ZTI21QOAuthOobReplyHandler@Qt_6 6.6.1

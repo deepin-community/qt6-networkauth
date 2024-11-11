@@ -8,7 +8,6 @@
 #include "qoauth1.h"
 #include "qoauth1_p.h"
 #include "qoauth1signature.h"
-#include "qoauthoobreplyhandler.h"
 #include "qoauthhttpserverreplyhandler.h"
 
 #include <QtCore/qmap.h>
@@ -192,7 +191,7 @@ QNetworkReply *QOAuth1Private::requestToken(QNetworkAccessManager::Operation ope
 
     QAbstractOAuthReplyHandler *handler = replyHandler ? replyHandler.data()
                                                        : defaultReplyHandler.data();
-    QObject::connect(reply, &QNetworkReply::finished,
+    QObject::connect(reply, &QNetworkReply::finished, handler,
                      [handler, reply]() { handler->networkReplyFinished(reply); });
     connect(handler, &QAbstractOAuthReplyHandler::tokensReceived, this,
             &QOAuth1Private::_q_tokensReceived);
@@ -401,6 +400,8 @@ QPair<QString, QString> QOAuth1::clientCredentials() const
 }
 
 /*!
+    \fn void QOAuth1::setClientCredentials(const std::pair<QString, QString> &clientCredentials)
+
     Sets \a clientCredentials as the pair of QString used to identify
     the application and sign requests to the web server.
 
@@ -453,6 +454,8 @@ void QOAuth1::setTokenSecret(const QString &tokenSecret)
 }
 
 /*!
+    \fn std::pair<QString, QString> QOAuth1::tokenCredentials() const
+
     Returns the pair of QString used to identify and sign
     authenticated requests to the web server.
 
@@ -465,6 +468,8 @@ QPair<QString, QString> QOAuth1::tokenCredentials() const
 }
 
 /*!
+    \fn void QOAuth1::setTokenCredentials(const std::pair<QString, QString> &tokenCredentials)
+
     Sets \a tokenCredentials as the pair of QString used to identify
     and sign authenticated requests to the web server.
 
@@ -609,7 +614,7 @@ QNetworkReply *QOAuth1::get(const QUrl &url, const QVariantMap &parameters)
     QNetworkRequest request(url);
     setup(&request, parameters, QNetworkAccessManager::GetOperation);
     QNetworkReply *reply = d->networkAccessManager()->get(request);
-    connect(reply, &QNetworkReply::finished, [this, reply]() { emit finished(reply); });
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() { emit finished(reply); });
     return reply;
 }
 
@@ -634,7 +639,7 @@ QNetworkReply *QOAuth1::post(const QUrl &url, const QVariantMap &parameters)
 
     const QByteArray data = d->convertParameters(parameters);
     QNetworkReply *reply = d->networkAccessManager()->post(request, data);
-    connect(reply, &QNetworkReply::finished, [this, reply]() { emit finished(reply); });
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() { emit finished(reply); });
     return reply;
 }
 
@@ -659,7 +664,7 @@ QNetworkReply *QOAuth1::put(const QUrl &url, const QVariantMap &parameters)
 
     const QByteArray data = d->convertParameters(parameters);
     QNetworkReply *reply = d->networkAccessManager()->put(request, data);
-    connect(reply, &QNetworkReply::finished, std::bind(&QAbstractOAuth::finished, this, reply));
+    connect(reply, &QNetworkReply::finished, this, std::bind(&QAbstractOAuth::finished, this, reply));
     return reply;
 }
 
@@ -681,7 +686,7 @@ QNetworkReply *QOAuth1::deleteResource(const QUrl &url, const QVariantMap &param
     QNetworkRequest request(url);
     setup(&request, parameters, QNetworkAccessManager::DeleteOperation);
     QNetworkReply *reply = d->networkAccessManager()->deleteResource(request);
-    connect(reply, &QNetworkReply::finished, [this, reply]() { emit finished(reply); });
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() { emit finished(reply); });
     return reply;
 }
 
@@ -706,6 +711,11 @@ QNetworkReply *QOAuth1::requestTemporaryCredentials(QNetworkAccessManager::Opera
 }
 
 /*!
+    \fn QNetworkReply *QOAuth1::requestTokenCredentials(QNetworkAccessManager::Operation operation,
+                                                const QUrl &url,
+                                                const std::pair<QString, QString> &temporaryToken,
+                                                const QVariantMap &parameters)
+
     Starts a request for token credentials using the request
     method \a operation. The request URL is \a url and the
     \a parameters shall be encoded and sent during the
@@ -855,7 +865,7 @@ void QOAuth1::grant()
     }
 
     QMetaObject::Connection connection;
-    connection = connect(this, &QAbstractOAuth::statusChanged, [&](Status status) {
+    connection = connect(this, &QAbstractOAuth::statusChanged, this, [&](Status status) {
         Q_D(QOAuth1);
 
         if (status == Status::TemporaryCredentialsReceived) {
@@ -883,8 +893,8 @@ void QOAuth1::grant()
 
     auto httpReplyHandler = qobject_cast<QOAuthHttpServerReplyHandler*>(replyHandler());
     if (httpReplyHandler) {
-        connect(httpReplyHandler, &QOAuthHttpServerReplyHandler::callbackReceived, [&](
-                const QVariantMap &values) {
+        auto func = [this](const QVariantMap &values) {
+            Q_D(QOAuth1);
             QString verifier = values.value(OAuth1::oauthVerifier).toString();
             if (verifier.isEmpty()) {
                 qCWarning(d->loggingCategory, "%s not found in the callback",
@@ -892,7 +902,8 @@ void QOAuth1::grant()
                 return;
             }
             continueGrantWithVerifier(verifier);
-        });
+        };
+        connect(httpReplyHandler, &QOAuthHttpServerReplyHandler::callbackReceived, this, func);
     }
 
     // requesting temporary credentials

@@ -34,3 +34,7 @@ usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/Qt6NetworkAuth.pc
 usr/lib/${DEB_HOST_MULTIARCH}/qt6/metatypes/qt6networkauth_none_metatypes.json
 usr/lib/${DEB_HOST_MULTIARCH}/qt6/mkspecs/modules/qt_lib_networkauth.pri
 usr/lib/${DEB_HOST_MULTIARCH}/qt6/modules/NetworkAuth.json
+usr/include/${DEB_HOST_MULTIARCH}/qt6/QtNetworkAuth/QOAuthUriSchemeReplyHandler
+usr/include/${DEB_HOST_MULTIARCH}/qt6/QtNetworkAuth/qoauthurischemereplyhandler.h
+usr/include/${DEB_HOST_MULTIARCH}/qt6/QtNetworkAuth/qtnetworkauth-config.h
+usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6NetworkAuth/Qt6NetworkAuthVersionlessAliasTargets.cmake
